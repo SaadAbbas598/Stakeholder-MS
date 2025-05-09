@@ -1,4 +1,3 @@
-// components/Sidebar.jsx
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
@@ -17,41 +16,54 @@ const Sidebar = () => {
   const location = useLocation();
 
   const menuItems = [
-    { name: 'Dashboard', icon: <FaTachometerAlt className="text-blue-500" />, path: '/' },
-    { name: 'Stakeholders', icon: <FaUsers className="text-purple-500" />, path: '/stakeholders' },
-    { name: 'Projects', icon: <FaProjectDiagram className="text-green-500" />, path: '/projects' },
-    { name: 'Financials', icon: <FaWallet className="text-emerald-600" />, path: '/financials' },
-    { name: 'Profit Distribution', icon: <FaChartPie className="text-pink-500" />, path: '/profit-distribution' },
-    { name: 'Reports', icon: <FaFileExport className="text-yellow-500" />, path: '/reports' },
-    { name: 'Logout', icon: <FaSignOutAlt className="text-gray-500" />, path: '/logout' },
+    { name: 'Dashboard', icon: <FaTachometerAlt />, path: '/' },
+    { name: 'Stakeholders', icon: <FaUsers />, path: '/stakeholders' },
+    { name: 'Projects', icon: <FaProjectDiagram />, path: '/projects' },
+    { name: 'Financials', icon: <FaWallet />, path: '/financials' },
+    { name: 'Profit Distribution', icon: <FaChartPie />, path: '/profit-distribution' },
+    { name: 'Reports', icon: <FaFileExport />, path: '/reports' },
+    { name: 'Logout', icon: <FaSignOutAlt />, path: '/logout' },
   ];
 
   return (
     <>
-      {/* Mobile Toggle Button */}
+      {/* Mobile Toggle */}
       <div className="md:hidden p-4">
-        <button onClick={() => setOpen(!open)} className="text-2xl">
+        <button onClick={() => setOpen(!open)} className="text-white text-2xl">
           <FaBars />
         </button>
       </div>
 
       {/* Sidebar */}
-      <div className={`fixed top-0 left-0 h-full bg-gray-100 text-black w-64 p-6 transform transition-transform duration-300 z-40 ${open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 md:relative`}>
-        <h1 className="text-2xl font-bold mb-8 text-center">Profit Tracker</h1>
-        <nav className="flex flex-col space-y-4">
+      <div
+        className={`fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-[#152055] to-[#0f1b42] text-white p-6 z-40 transform transition-transform duration-300 ${
+          open ? 'translate-x-0' : '-translate-x-full'
+        } md:translate-x-0 md:relative`}
+      >
+        {/* Header */}
+        <div className="mb-10 text-center">
+          <div className="text-3xl">✅</div>
+          <h1 className="text-sm tracking-wide font-semibold mt-1">STAKEHOLDER</h1>
+          <p className="text-xs text-gray-300">MANAGEMENT</p>
+        </div>
+
+        {/* Menu */}
+        <nav className="flex flex-col space-y-2">
           {menuItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
               <Link
                 key={item.name}
                 to={item.path}
-                className={`flex items-center gap-3 p-2 rounded transition-colors ${
-                  isActive ? 'bg-gray-300 font-semibold' : 'hover:bg-gray-300'
+                className={`flex items-center gap-3 px-4 py-2 rounded-md transition ${
+                  isActive
+                    ? 'bg-[#1e2a5a] text-white font-semibold'
+                    : 'hover:bg-[#253468] text-gray-300'
                 }`}
                 onClick={() => setOpen(false)}
               >
                 <span className="text-lg">{item.icon}</span>
-                <span className="text-base">{item.name}</span>
+                <span className="text-sm">{item.name}</span>
               </Link>
             );
           })}

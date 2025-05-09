@@ -86,7 +86,7 @@ const Stakeholders = () => {
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gray-50 relative">
       <Sidebar />
-
+      
       <main className="flex-1 p-4 md:p-6 space-y-6 relative z-10">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <h1 className="text-2xl md:text-3xl font-bold text-indigo-600">Manage Stakeholders</h1>
