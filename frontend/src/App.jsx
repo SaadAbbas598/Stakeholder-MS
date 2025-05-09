@@ -11,7 +11,7 @@ import FinanceTracker from './pages/FianceTracker'
 function App() {
   return (
     <Router>
-      {/* You can uncomment Sidebar if you want it on all pages */}
+      {/* You can uncomment Sidebar and if you want it on all pages */}
       {/* <Sidebar /> */}
       <Routes>
         <Route path="/" element={<Dashboard />} />
