@@ -16,6 +16,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import Sidebar from '../components/Sidebar';
+import Navbar from '../components/Navbar'; // ✅ Import Navbar
 
 const AddProjectFinance = ({ onAddTransaction }) => {
   const [amount, setAmount] = useState('');
@@ -58,110 +59,116 @@ const AddProjectFinance = ({ onAddTransaction }) => {
           <Sidebar />
         </Box>
 
-        {/* Main Content */}
-        <Box sx={{ flexGrow: 1, p: 4 }}>
-          <Typography variant="h4" gutterBottom fontWeight="bold" color="primary">
-            Add Transaction
-          </Typography>
+        {/* Main Content Area */}
+        <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+          {/* Navbar */}
+          <Navbar />
 
-          <Paper elevation={4} sx={{ p: 4, borderRadius: 3 }}>
-            <form onSubmit={handleSubmit}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
-                  <FormControl fullWidth>
-                    <InputLabel>Type</InputLabel>
-                    <Select
-                      value={type}
-                      onChange={(e) => setType(e.target.value)}
-                      label="Type"
-                    >
-                      <MenuItem value="income">Income</MenuItem>
-                      <MenuItem value="expense">Expense</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
+          {/* Page Content */}
+          <Box sx={{ flexGrow: 1, p: 4 }}>
+            <Typography variant="h4" gutterBottom fontWeight="bold" color="primary">
+              Add Transaction
+            </Typography>
 
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    label="Amount"
-                    type="number"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    required
-                  />
-                </Grid>
+            <Paper elevation={4} sx={{ p: 4, borderRadius: 3 }}>
+              <form onSubmit={handleSubmit}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth>
+                      <InputLabel>Type</InputLabel>
+                      <Select
+                        value={type}
+                        onChange={(e) => setType(e.target.value)}
+                        label="Type"
+                      >
+                        <MenuItem value="income">Income</MenuItem>
+                        <MenuItem value="expense">Expense</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
 
-                <Grid item xs={12} sm={6}>
-                  <DatePicker
-                    label="Date"
-                    value={date}
-                    onChange={(newDate) => setDate(newDate)}
-                    renderInput={(params) => (
-                      <TextField {...params} fullWidth required />
-                    )}
-                  />
-                </Grid>
-
-                <Grid item xs={12} sm={6}>
-                  <FormControl fullWidth>
-                    <InputLabel>Category</InputLabel>
-                    <Select
-                      value={category}
-                      onChange={(e) => setCategory(e.target.value)}
-                      label="Category"
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      label="Amount"
+                      type="number"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
                       required
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={6}>
+                    <DatePicker
+                      label="Date"
+                      value={date}
+                      onChange={(newDate) => setDate(newDate)}
+                      renderInput={(params) => (
+                        <TextField {...params} fullWidth required />
+                      )}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth>
+                      <InputLabel>Category</InputLabel>
+                      <Select
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                        label="Category"
+                        required
+                      >
+                        {(type === 'income' ? incomeCategories : expenseCategories).map((cat) => (
+                          <MenuItem key={cat} value={cat}>{cat}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      label="Project"
+                      value={project}
+                      onChange={(e) => setProject(e.target.value)}
+                      required
+                      placeholder="Enter project name"
+                    />
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      label="Description"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      multiline
+                      rows={4}
+                      placeholder="Write any extra details..."
+                    />
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <Divider sx={{ my: 2 }} />
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      size="large"
+                      color="primary"
+                      fullWidth
+                      sx={{
+                        borderRadius: 2,
+                        fontWeight: 'bold',
+                        letterSpacing: 1
+                      }}
                     >
-                      {(type === 'income' ? incomeCategories : expenseCategories).map((cat) => (
-                        <MenuItem key={cat} value={cat}>{cat}</MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
+                      Add Transaction
+                    </Button>
+                  </Grid>
                 </Grid>
-
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Project"
-                    value={project}
-                    onChange={(e) => setProject(e.target.value)}
-                    required
-                    placeholder="Enter project name"
-                  />
-                </Grid>
-
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    multiline
-                    rows={4}
-                    placeholder="Write any extra details..."
-                  />
-                </Grid>
-
-                <Grid item xs={12}>
-                  <Divider sx={{ my: 2 }} />
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    size="large"
-                    color="primary"
-                    fullWidth
-                    sx={{
-                      borderRadius: 2,
-                      fontWeight: 'bold',
-                      letterSpacing: 1
-                    }}
-                  >
-                    Add Transaction
-                  </Button>
-                </Grid>
-              </Grid>
-            </form>
-          </Paper>
+              </form>
+            </Paper>
+          </Box>
         </Box>
       </Box>
     </LocalizationProvider>

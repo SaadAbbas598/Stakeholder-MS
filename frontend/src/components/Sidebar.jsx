@@ -28,7 +28,7 @@ const Sidebar = () => {
   return (
     <>
       {/* Mobile Toggle */}
-      <div className="md:hidden p-4">
+      <div className="md:hidden p-4 fixed top-0 left-0 z-50">
         <button onClick={() => setOpen(!open)} className="text-white text-2xl">
           <FaBars />
         </button>
@@ -36,9 +36,9 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-[#152055] to-[#0f1b42] text-white p-6 z-40 transform transition-transform duration-300 ${
-          open ? 'translate-x-0' : '-translate-x-full'
-        } md:translate-x-0 md:relative`}
+        className={`fixed top-0 left-0 h-full bg-gradient-to-b from-[#152055] to-[#0f1b42] text-white p-6 z-40 transform transition-transform duration-300 ${
+          open ? 'translate-x-0 w-64' : '-translate-x-full w-0'
+        } md:translate-x-0 md:w-64`}
       >
         {/* Header */}
         <div className="mb-10 text-center">

@@ -1,186 +1,172 @@
 import React, { useState, useEffect } from 'react';
 import { Pencil, Trash2, Plus } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
+import Navbar from '../components/Navbar';
 import SearchBar from '../components/SearchBar';
 import Pagination from '../components/Pagination';
 import InputField from '../components/InputField';
 
 const ProjectManagement = () => {
   const projectsPerPage = 5;
+
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalData, setModalData] = useState({
     id: '',
     name: '',
     description: '',
     value: '',
-    completion: 0
+    completion: 0,
   });
   const [projects, setProjects] = useState([]);
 
-  // Load sample data on first render
   useEffect(() => {
-    const sampleProjects = [
+    const sampleData = [
       { id: '1', name: 'Website Redesign', description: 'Complete overhaul of company website', value: 15000, completion: 75 },
       { id: '2', name: 'Mobile App Development', description: 'iOS and Android app for customer portal', value: 35000, completion: 30 },
-      { id: '3', name: 'CRM Implementation', description: 'Salesforce integration for sales team', value: 25000, completion: 90 }
+      { id: '3', name: 'CRM Implementation', description: 'Salesforce integration for sales team', value: 25000, completion: 90 },
     ];
-    setProjects(sampleProjects);
+    setProjects(sampleData);
   }, []);
 
-  // Filter projects based on search term
-  const filteredProjects = projects.filter(project =>
-    project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.description.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProjects = projects.filter(p =>
+    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    p.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Pagination logic
   const indexOfLast = currentPage * projectsPerPage;
   const indexOfFirst = indexOfLast - projectsPerPage;
   const currentProjects = filteredProjects.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(filteredProjects.length / projectsPerPage);
 
-  const handlePageChange = (pageNumber) => {
-    if (pageNumber >= 1 && pageNumber <= totalPages) {
-      setCurrentPage(pageNumber);
-    }
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) setCurrentPage(page);
   };
 
   const handleSave = () => {
     if (modalData.id) {
-      // Update existing project
-      setProjects(projects.map(project => 
-        project.id === modalData.id ? modalData : project
-      ));
+      setProjects(projects.map(p => (p.id === modalData.id ? modalData : p)));
     } else {
-      // Add new project
-      const newProject = {
-        ...modalData,
-        id: Date.now().toString()
-      };
-      setProjects([...projects, newProject]);
+      setProjects([...projects, { ...modalData, id: Date.now().toString() }]);
     }
-    setModalOpen(false);
+    setIsModalOpen(false);
   };
 
   const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this project?')) {
-      setProjects(projects.filter(project => project.id !== id));
+    if (confirm('Are you sure you want to delete this project?')) {
+      setProjects(projects.filter(p => p.id !== id));
     }
   };
 
-  const completionColor = (percentage) => {
-    if (percentage < 30) return 'bg-red-500';
-    if (percentage < 70) return 'bg-yellow-500';
+  const completionColor = (value) => {
+    if (value < 30) return 'bg-red-500';
+    if (value < 70) return 'bg-yellow-500';
     return 'bg-green-500';
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-gray-50 relative">
-      <Sidebar />
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar with reduced width */}
+      <div className="w-25 fixed md:relative z-40">
+        <Sidebar />
+      </div>
 
-      <main className="flex-1 p-4 md:p-6 space-y-6 relative z-10">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-indigo-600">Project Management</h1>
-
-          <div className="max-w-md">
+      {/* Main content with left margin to avoid overlap */}
+      <div className="flex-1 md:ml-40">
+        <Navbar />
+        <main className="p-6 space-y-6">
+          <div className="flex flex-col md:flex-row justify-between gap-4">
+            <h1 className="text-2xl font-bold text-indigo-600">Project Management</h1>
             <SearchBar
               placeholder="Search projects..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
+            <button
+              onClick={() => {
+                setModalData({ id: '', name: '', description: '', value: '', completion: 0 });
+                setIsModalOpen(true);
+              }}
+              className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg"
+            >
+              <Plus className="w-5 h-5" />
+              <span>Add Project</span>
+            </button>
           </div>
 
-          <button
-            onClick={() => {
-              setModalData({ id: '', name: '', description: '', value: '', completion: 0 });
-              setModalOpen(true);
-            }}
-            className="flex items-center space-x-1 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition"
-          >
-            <Plus className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm relative">
-          {filteredProjects.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              No projects found. {searchTerm ? 'Try a different search.' : 'Add a project to get started.'}
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-sm relative z-10">
-                <thead className="text-left">
+          <div className="bg-white p-6 rounded-xl shadow-sm">
+            {filteredProjects.length === 0 ? (
+              <p className="text-center text-gray-500 py-6">
+                No projects found. {searchTerm ? 'Try a different search.' : 'Add a new project.'}
+              </p>
+            ) : (
+              <table className="min-w-full text-sm">
+                <thead>
                   <tr className="text-gray-500 border-b">
-                    <th className="py-3 pr-4 whitespace-nowrap">Project Name</th>
-                    <th className="py-3 pr-4 whitespace-nowrap">Description</th>
-                    <th className="py-3 pr-4 whitespace-nowrap">Value</th>
-                    <th className="py-3 pr-4 whitespace-nowrap">Completion</th>
-                    <th className="py-3 pr-4 text-right whitespace-nowrap">Actions</th>
+                    <th className="py-3 text-left">Project Name</th>
+                    <th className="py-3 text-left">Description</th>
+                    <th className="py-3 text-left">Value</th>
+                    <th className="py-3 text-left">Completion</th>
+                    <th className="py-3 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {currentProjects.map((project) => (
-                    <tr key={project.id} className="hover:bg-gray-50 transition">
-                      <td className="py-4 pr-4 whitespace-nowrap font-medium">{project.name}</td>
-                      <td className="py-4 pr-4">
-                        <span className="text-sm text-gray-600">{project.description}</span>
-                      </td>
-                      <td className="py-4 pr-4 font-semibold text-indigo-600 whitespace-nowrap">
-                        ${project.value.toLocaleString()}
-                      </td>
-                      <td className="py-4 pr-4">
-                        <div className="flex items-center">
-                          <div className="w-full bg-gray-200 rounded-full h-2.5 mr-2">
-                            <div 
-                              className={`h-2.5 rounded-full ${completionColor(project.completion)}`}
-                              style={{ width: `${project.completion}%` }}
-                            ></div>
+                <tbody className="divide-y">
+                  {currentProjects.map(p => (
+                    <tr key={p.id}>
+                      <td className="py-4 font-medium">{p.name}</td>
+                      <td className="py-4 text-gray-600">{p.description}</td>
+                      <td className="py-4 text-indigo-600 font-semibold">${p.value.toLocaleString()}</td>
+                      <td className="py-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-full bg-gray-200 rounded-full h-2.5">
+                            <div
+                              className={`h-2.5 rounded-full ${completionColor(p.completion)}`}
+                              style={{ width: `${p.completion}%` }}
+                            />
                           </div>
-                          <span className="text-sm text-gray-500">{project.completion}%</span>
+                          <span className="text-sm text-gray-500">{p.completion}%</span>
                         </div>
                       </td>
-                      <td className="py-4 pr-4 text-right space-x-2">
-                        <button 
+                      <td className="py-4 text-right space-x-2">
+                        <button
                           onClick={() => {
-                            setModalData(project);
-                            setModalOpen(true);
-                          }} 
-                          className="text-blue-600 hover:text-blue-800 transition"
+                            setModalData(p);
+                            setIsModalOpen(true);
+                          }}
+                          className="text-blue-600 hover:text-blue-800"
                         >
-                          <Pencil className="w-4 h-4 md:w-5 md:h-5" />
+                          <Pencil className="w-5 h-5" />
                         </button>
-                        <button 
-                          onClick={() => handleDelete(project.id)} 
-                          className="text-red-600 hover:text-red-800 transition"
+                        <button
+                          onClick={() => handleDelete(p.id)}
+                          className="text-red-600 hover:text-red-800"
                         >
-                          <Trash2 className="w-4 h-4 md:w-5 md:h-5" />
+                          <Trash2 className="w-5 h-5" />
                         </button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
 
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-      </main>
+          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+        </main>
+      </div>
 
+      {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[1000] transition-all duration-300">
-          <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-xl space-y-6 relative animate-fadeIn">
-            
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50">
+          <div className="bg-white rounded-xl p-8 w-full max-w-lg space-y-6 shadow-xl">
             <div className="flex justify-between items-center border-b pb-4">
-              <h2 className="text-2xl font-semibold text-indigo-700">
-                {modalData.id ? 'Edit' : 'Add'} Project
+              <h2 className="text-xl font-semibold text-indigo-700">
+                {modalData.id ? 'Edit Project' : 'Add Project'}
               </h2>
               <button
-                onClick={() => setModalOpen(false)}
-                className="text-gray-400 hover:text-red-500 transition duration-200 text-xl"
-                aria-label="Close"
+                onClick={() => setIsModalOpen(false)}
+                className="text-gray-400 hover:text-red-500 text-2xl"
               >
                 &times;
               </button>
@@ -196,18 +182,18 @@ const ProjectManagement = () => {
               <InputField
                 type="text"
                 placeholder="Description"
+                textarea
                 value={modalData.description}
                 onChange={(e) => setModalData({ ...modalData, description: e.target.value })}
-                textarea
               />
               <InputField
                 type="number"
                 placeholder="Value ($)"
                 value={modalData.value}
-                onChange={(e) => setModalData({ ...modalData, value: e.target.value })}
+                onChange={(e) => setModalData({ ...modalData, value: Number(e.target.value) })}
               />
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700">
                   Completion: {modalData.completion}%
                 </label>
                 <input
@@ -215,22 +201,22 @@ const ProjectManagement = () => {
                   min="0"
                   max="100"
                   value={modalData.completion}
-                  onChange={(e) => setModalData({ ...modalData, completion: parseInt(e.target.value) || 0 })}
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                  onChange={(e) => setModalData({ ...modalData, completion: parseInt(e.target.value, 10) })}
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none"
                 />
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 pt-6 border-t">
+            <div className="flex justify-end gap-4 border-t pt-4">
               <button
-                onClick={() => setModalOpen(false)}
-                className="px-5 py-2 rounded-lg border text-gray-700 hover:bg-gray-100 transition"
+                onClick={() => setIsModalOpen(false)}
+                className="px-4 py-2 border rounded-lg text-gray-600 hover:bg-gray-100"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSave}
-                className="px-5 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition"
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
               >
                 Save
               </button>

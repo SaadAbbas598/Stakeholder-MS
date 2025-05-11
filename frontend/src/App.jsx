@@ -7,6 +7,7 @@ import Stakeholders from './pages/Stakeholders'
 import ProjectManagement from './pages/ProjectManage'
 import IncomeExpenseTracker from './pages/IncomeExpense'
 import FinanceTracker from './pages/FianceTracker'
+import Reports from './pages/Reports'
 
 function App() {
   return (
@@ -19,6 +20,8 @@ function App() {
         <Route path="/projects" element={<ProjectManagement />} />
         <Route path="/financials" element={<IncomeExpenseTracker />} />
         <Route path="/profit-distribution" element={<FinanceTracker />} />
+        <Route path="/reports" element={<Reports />} />
+
 
 
 

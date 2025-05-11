@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Pencil, Trash2, Plus } from 'lucide-react';
-import { Link } from "react-router-dom";
 import Sidebar from '../components/Sidebar';
 import SearchBar from '../components/SearchBar';
 import Pagination from '../components/Pagination';
 import InputField from '../components/InputField';
+import Navbar from '../components/Navbar';
 
 const allStakeholders = [
   {
@@ -84,108 +84,111 @@ const Stakeholders = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-gray-50 relative">
+    <div className="min-h-screen flex flex-col md:flex-row bg-gray-50">
       <Sidebar />
       
-      <main className="flex-1 p-4 md:p-6 space-y-6 relative z-10">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-indigo-600">Manage Stakeholders</h1>
+      <div className="flex-1 flex flex-col overflow-hidden md:ml-64">
+        <Navbar />
+        
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <h1 className="text-2xl md:text-3xl font-bold text-indigo-600">Manage Stakeholders</h1>
 
-          <div className="max-w-md">
-            <SearchBar
-              placeholder="Search stakeholders..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+            <div className="max-w-md w-full">
+              <SearchBar
+                placeholder="Search stakeholders..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+
+            <button
+              onClick={() => {
+                setModalData({ id: '', name: '', email: '', role: '', share: 0, responsibilities: '' });
+                setModalOpen(true);
+              }}
+              className="flex items-center space-x-1 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition whitespace-nowrap"
+            >
+              <Plus className="w-5 h-5" />
+              <span>Add Stakeholder</span>
+            </button>
           </div>
 
-          <button
-            onClick={() => {
-              setModalData({ id: '', name: '', email: '', role: '', share: 0, responsibilities: '' });
-              setModalOpen(true);
-            }}
-            className="flex items-center space-x-1 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition"
-          >
-            <Plus className="w-5 h-5" />
-            <span>Add Stakeholder</span>
-          </button>
-        </div>
-
-        <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm relative">
-          {filteredStakeholders.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              No stakeholders found. {searchTerm ? 'Try a different search.' : 'Add a stakeholder to get started.'}
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-sm relative z-10">
-                <thead className="text-left">
-                  <tr className="text-gray-500 border-b">
-                    <th className="py-3 pr-4 whitespace-nowrap">Name</th>
-                    <th className="py-3 pr-4 whitespace-nowrap">Email</th>
-                    <th className="py-3 pr-4 whitespace-nowrap">Role</th>
-                    <th className="py-3 pr-4 whitespace-nowrap">Responsibilities</th>
-                    <th className="py-3 pr-4 whitespace-nowrap">Share</th>
-                    <th className="py-3 pr-4 text-right whitespace-nowrap">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {currentStakeholders.map((stakeholder) => (
-                    <tr key={stakeholder.id} className="hover:bg-gray-50 transition">
-                      <td className="py-4 pr-4 whitespace-nowrap font-medium">{stakeholder.name}</td>
-                      <td className="py-4 pr-4 whitespace-nowrap">{stakeholder.email}</td>
-                      <td className="py-4 pr-4">
-                        <span className={`text-sm font-medium ${roleColors[stakeholder.role]}`}>
-                          {stakeholder.role}
-                        </span>
-                      </td>
-                      <td className="py-4 pr-4">
-                        <span className="text-sm text-gray-600">{stakeholder.responsibilities}</span>
-                      </td>
-                      <td className="py-4 pr-4">
-                        <div className="flex items-center">
-                          <div className="w-full bg-gray-200 rounded-full h-2.5 mr-2">
-                            <div 
-                              className={`h-2.5 rounded-full ${shareColor(stakeholder.share)}`}
-                              style={{ width: `${stakeholder.share}%` }}
-                            ></div>
-                          </div>
-                          <span className="text-sm text-gray-500">{stakeholder.share}%</span>
-                        </div>
-                      </td>
-                      <td className="py-4 pr-4 text-right space-x-2">
-                        <button 
-                          onClick={() => {
-                            setModalData(stakeholder);
-                            setModalOpen(true);
-                          }} 
-                          className="text-blue-600 hover:text-blue-800 transition"
-                        >
-                          <Pencil className="w-4 h-4 md:w-5 md:h-5" />
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(stakeholder.id)} 
-                          className="text-red-600 hover:text-red-800 transition"
-                        >
-                          <Trash2 className="w-4 h-4 md:w-5 md:h-5" />
-                        </button>
-                      </td>
+          <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm">
+            {filteredStakeholders.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                No stakeholders found. {searchTerm ? 'Try a different search.' : 'Add a stakeholder to get started.'}
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-sm">
+                  <thead className="text-left">
+                    <tr className="text-gray-500 border-b">
+                      <th className="py-3 pr-4 whitespace-nowrap">Name</th>
+                      <th className="py-3 pr-4 whitespace-nowrap">Email</th>
+                      <th className="py-3 pr-4 whitespace-nowrap">Role</th>
+                      <th className="py-3 pr-4 whitespace-nowrap">Responsibilities</th>
+                      <th className="py-3 pr-4 whitespace-nowrap">Share</th>
+                      <th className="py-3 pr-4 text-right whitespace-nowrap">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {currentStakeholders.map((stakeholder) => (
+                      <tr key={stakeholder.id} className="hover:bg-gray-50 transition">
+                        <td className="py-4 pr-4 whitespace-nowrap font-medium">{stakeholder.name}</td>
+                        <td className="py-4 pr-4 whitespace-nowrap">{stakeholder.email}</td>
+                        <td className="py-4 pr-4">
+                          <span className={`text-sm font-medium ${roleColors[stakeholder.role]}`}>
+                            {stakeholder.role}
+                          </span>
+                        </td>
+                        <td className="py-4 pr-4">
+                          <span className="text-sm text-gray-600">{stakeholder.responsibilities}</span>
+                        </td>
+                        <td className="py-4 pr-4">
+                          <div className="flex items-center">
+                            <div className="w-full bg-gray-200 rounded-full h-2.5 mr-2">
+                              <div 
+                                className={`h-2.5 rounded-full ${shareColor(stakeholder.share)}`}
+                                style={{ width: `${stakeholder.share}%` }}
+                              ></div>
+                            </div>
+                            <span className="text-sm text-gray-500">{stakeholder.share}%</span>
+                          </div>
+                        </td>
+                        <td className="py-4 pr-4 text-right space-x-2">
+                          <button 
+                            onClick={() => {
+                              setModalData(stakeholder);
+                              setModalOpen(true);
+                            }} 
+                            className="text-blue-600 hover:text-blue-800 transition"
+                          >
+                            <Pencil className="w-4 h-4 md:w-5 md:h-5" />
+                          </button>
+                          <button 
+                            onClick={() => handleDelete(stakeholder.id)} 
+                            className="text-red-600 hover:text-red-800 transition"
+                          >
+                            <Trash2 className="w-4 h-4 md:w-5 md:h-5" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
 
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-      </main>
+          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+        </main>
+      </div>
 
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl p-8 animate-fadeIn">
-            {/* Header */}
             <div className="flex justify-between items-center border-b pb-4">
               <h2 className="text-2xl font-bold text-indigo-700">
                 {modalData.id ? 'Edit Stakeholder' : 'Add Stakeholder'}
@@ -199,7 +202,6 @@ const Stakeholders = () => {
               </button>
             </div>
 
-            {/* Form */}
             <div className="grid grid-cols-1 gap-5 mt-6">
               <InputField
                 type="text"
@@ -242,7 +244,6 @@ const Stakeholders = () => {
               </div>
             </div>
 
-            {/* Footer */}
             <div className="flex justify-end gap-4 pt-6 border-t mt-8">
               <button
                 onClick={() => setModalOpen(false)}
